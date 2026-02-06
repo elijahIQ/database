@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google-adsense-account" content="ca-pub-9286491122603741">
+<title>Database Try-Out Questions</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f5f5f5;
+        margin: 0;
+    }
+    header {
+        background: #003366;
+        padding: 15px;
+        color: white;
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    #timer {
+        background: #222;
+        color: #fff;
+        text-align: center;
+        padding: 10px;
+        font-size: 20px;
+    }
+    .container {
+        width: 95%;
+        max-width: 900px;
+        margin: 20px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px #ccc;
+    }
+    .question-box {
+        padding: 15px;
+        background: #eef3fa;
+        border-left: 5px solid #003366;
+        border-radius: 6px;
+        margin-bottom: 20px;
+    }
+    .nav-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+    button {
+        padding: 12px 20px;
+        background: #003366;
+        color: white;
+        border: none;
+        font-size: 16px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    button:hover {
+        background: #0055aa;
+    }
+    #submitBtn {
+        width: 100%;
+        margin-top: 25px;
+        background: #008800;
+    }
+    #result {
+        display: none;
+        padding: 20px;
+        background: #d8ffd8;
+        border-left: 5px solid #009933;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-size: 20px;
+    }
+    .correct-answer {
+        color: green;
+        font-weight: bold;
+    }
+    .incorrect-answer {
+        color: red;
+        font-weight: bold;
+    }
+</style>
+</head>
+
+<body>
+
+<header>Database Try-Out Questions</header>
+<div id="timer">Time Left: <span id="time">60:00</span></div>
+
+<div class="container">
+
+    <div id="questionContainer"></div>
+
+    <div class="nav-buttons">
+        <button onclick="prevQuestion()">Previous</button>
+        <button onclick="nextQuestion()">Next</button>
+    </div>
+
+    <button id="submitBtn" onclick="submitQuiz()">Submit Answers</button>
+
+    <div id="result"></div>
+
+</div>
+
+<script>
+
+//new
+
+
+let questions = [
+    { q: "What is the primary difference between data and information?",
+      o: [
+        "Data is qualitative, while information is quantitative",
+        "Data is raw facts, while information is processed data with context",
+        "Data is stored, while information is retrieved",
+        "Data is internal, while information is external"
+      ],
+      a: 1
+    },
+
+    { q: "What is the main benefit of using a database?",
+      o: [
+        "It provides a way to store data",
+        "It allows for fast data retrieval",
+        "It solves problems encountered in data management",
+        "It is a type of software"
+      ],
+      a: 2
+    },
+
+    { q: "Why is context important in transforming data into information?",
+      o: [
+        "It provides meaning to the data",
+        "It makes the data more complex",
+        "It reduces the accuracy of the data",
+        "It increases the storage space required"
+      ],
+      a: 0
+    },
+
+    { q: "What is an example of a context that can affect interpretation of data?",
+      o: [
+        "The type of database used",
+        "The unit of measurement used to express the data",
+        "The location where the data was collected",
+        "The person who collected the data"
+      ],
+      a: 1
+    },
+
+    { q: "What is the result of processing raw data to reveal meaning?",
+      o: ["Information", "Knowledge", "Wisdom", "Data"],
+      a: 0
+    },
+
+    { q: "What is the DIKW hierarchy?",
+      o: [
+        "Data, Information, Knowledge, Wisdom",
+        "Data, Interpretation, Knowledge, Wisdom",
+        "Data, Insight, Knowledge, Wisdom",
+        "Data, Information, Knowledge, Understanding"
+      ],
+      a: 0
+    },
+
+    { q: "What is the purpose of data management?",
+      o: [
+        "To store data efficiently",
+        "To retrieve data quickly",
+        "To generate, store, and retrieve data properly",
+        "To analyze data statistically"
+      ],
+      a: 2
+    },
+
+    { q: "What is a key characteristic of knowledge?",
+      o: [
+        "It is derived from data only",
+        "It is derived from information only",
+        "New knowledge can be derived from old knowledge",
+        "It is static and unchanging"
+      ],
+      a: 2
+    },
+
+    { q: "What is an example of a modern setting where databases are used?",
+      o: ["Research", "Administration", "Business", "All of the above"],
+      a: 3
+    },
+
+    { q: "Why are databases valuable assets for decision making?",
+      o: [
+        "They provide fast data retrieval",
+        "They store large amounts of data",
+        "They provide accurate and timely information",
+        "They are easy to use"
+      ],
+      a: 2
+    },
+
+    { q: "What is the main function of a database management system (DBMS)?",
+      o: [
+        "To store data",
+        "To retrieve data",
+        "To manage and maintain the database",
+        "To analyze data"
+      ],
+      a: 2
+    },
+
+    { q: "What is a flaw in file system data management?",
+      o: [
+        "Data redundancy",
+        "Data inconsistency",
+        "Data loss",
+        "All of the above"
+      ],
+      a: 3
+    },
+
+    { q: "What is the difference between a database and a file system?",
+      o: [
+        "A database is a type of file system",
+        "A file system is a type of database",
+        "A database is a more structured and organized way of storing data",
+        "A file system is more secure than a database"
+      ],
+      a: 2
+    },
+
+    { q: "Why is database design important?",
+      o: [
+        "It ensures data consistency",
+        "It improves data retrieval speed",
+        "It reduces data redundancy",
+        "All of the above"
+      ],
+      a: 3
+    },
+
+    { q: "What is the main component of a database system?",
+      o: ["Hardware", "Software", "Data", "Users"],
+      a: 2
+    },
+
+    { q: "What is the purpose of a database query?",
+      o: ["To store data", "To retrieve data", "To update data", "To delete data"],
+      a: 1
+    },
+
+    { q: "What is data redundancy?",
+      o: [
+        "Data is stored in multiple locations",
+        "Data is stored in a single location",
+        "Data is inconsistent",
+        "Data is incomplete"
+      ],
+      a: 0
+    },
+
+    { q: "What is data inconsistency?",
+      o: [
+        "Data is accurate and complete",
+        "Data is inaccurate or incomplete",
+        "Data is stored in multiple locations",
+        "Data is retrieved quickly"
+      ],
+      a: 1
+    },
+
+    { q: "What is the benefit of using a database?",
+      o: [
+        "Improved data security",
+        "Improved data integrity",
+        "Improved data retrieval speed",
+        "All of the above"
+      ],
+      a: 3
+    },
+
+    { q: "What is the role of a database administrator?",
+      o: [
+        "To design the database",
+        "To implement the database",
+        "To maintain the database",
+        "All of the above"
+      ],
+      a: 3
+    },
+    {
+    "q": "A field is a type of data or category used to organize information in a database.",
+    "o": ["False", "True"],
+    "a": 1
+  },
+  {
+    "q": "Before creating a table, what should you carefully plan?\nI. Which tables are needed\nII. Which fields are needed\nIII. How to query them\nIV. Which keys and relationships are needed",
+    "o": [
+      "I, II and IV",
+      "I and II only",
+      "II, III and IV",
+      "II and III only"
+    ],
+    "a": 0
+  },
+  {
+    "q": "Which are good sources of existing data when starting a database design?\nI. Linked tables\nII. Paper documents\nIII. Electronic documents\nIV. A sketch of the final output",
+    "o": [
+      "II, III and IV",
+      "I, II and III",
+      "I and IV only",
+      "II and IV only"
+    ],
+    "a": 0
+  },
+  {
+    "q": "When designing a relational database, which characteristics must you determine?\nI. The size of the data\nII. The purpose of the database\nIII. The fields that are needed\nIV. The queries to generate",
+    "o": [
+      "II, III and IV",
+      "I, II and III",
+      "I and IV only",
+      "III only"
+    ],
+    "a": 0
+  },
+  {
+    "q": "When creating a relationship between tables, what is required?",
+    "o": [
+      "Common data type",
+      "A common field",
+      "All of the above",
+      "Common design elements"
+    ],
+    "a": 1
+  },
+  {
+    "q": "In the Join Properties dialog box, you define how the left and right tables are related.",
+    "o": ["False", "True"],
+    "a": 1
+  },
+  {
+    "q": "In a left outer join, selected records come from the foreign table and excluded records come from the primary table.",
+    "o": ["True", "False"],
+    "a": 1
+  },
+  {
+    "q": "In an inner join, only matching records from both tables are included.",
+    "o": ["False", "True"],
+    "a": 1
+  },
+  {
+    "q": "Which of the following is a type of query join?",
+    "o": [
+      "Middle join",
+      "Left outer join",
+      "Inner join",
+      "Right outer join"
+    ],
+    "a": 2
+  },
+  {
+    "q": "A query join is a relationship that exists only while the query is running.",
+    "o": ["False", "True"],
+    "a": 1
+  },
+  {
+    "q": "Which formats can Access export data to?\nI. PowerPoint presentation\nII. Text file\nIII. XML file\nIV. Microsoft Word Merge\nV. PDF",
+    "o": [
+      "II, III, IV and V",
+      "I, II and III only",
+      "I, III and V only",
+      "II and IV only"
+    ],
+    "a": 0
+  },
+  {
+    "q": "Which options are available in the Get External Data Wizard?\nI. Open relationship tab\nII. Append a copy of the records into a table\nIII. Import source data into a new table\nIV. Link to the data by creating a linked table",
+    "o": [
+      "II, III and IV",
+      "I, II and III",
+      "I and IV only",
+      "III only"
+    ],
+    "a": 0
+  },
+  {
+    "q": "Which tab is used to import data from another Access database?",
+    "o": [
+      "Home",
+      "External Data",
+      "Import",
+      "Data"
+    ],
+    "a": 1
+  },
+  {
+    "q": "Which control is used for fixed, unchanging text?",
+    "o": [
+      "Text box",
+      "Combo box",
+      "Label",
+      "Rectangle"
+    ],
+    "a": 2
+  },
+  {
+    "q": "Which are the three context-sensitive tabs for report layout tools?",
+    "o": [
+      "Design, Report, Format",
+      "Design, Arrange, Format",
+      "Design, Grid, Arrange",
+      "Design, Layout, Tools"
+    ],
+    "a": 1
+  },
+  {
+    "q": "Where do you go to change the data type or formatting of a field?",
+    "o": [
+      "Home",
+      "Review",
+      "Properties",
+      "Help"
+    ],
+    "a": 2
+  },
+  {
+    "q": "Which control is used to display text that changes?",
+    "o": [
+      "Label",
+      "Hyperlink",
+      "Combo box",
+      "Text box"
+    ],
+    "a": 3
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+];
+
+
+
+//end
+
+
+
+/* ─────────────────────────
+    RANDOMIZE QUESTIONS
+─────────────────────────── */
+questions = questions.sort(() => Math.random() - 0.5);
+
+let currentIndex = 0;
+
+
+/* ──────────── STORE USER ANSWERS ──────────── */
+let userAnswers = {};  
+// example: userAnswers[3] = 2  → Question 3, option index 2 selected
+
+/* ─────────── DISPLAY QUESTION (with stored answers) ─────────── */
+function showQuestion() {
+    let q = questions[currentIndex];
+    let container = document.getElementById("questionContainer");
+
+    container.innerHTML = `
+        <div class="question-box">
+            <p><b>${currentIndex + 1}. ${q.q}</b></p>
+            ${q.o.map((opt, i) => `
+                <label>
+                    <input type="radio" name="q${currentIndex}"
+                        value="${i}"
+                        ${userAnswers[currentIndex] === i ? "checked" : ""}>
+                    ${opt}
+                </label><br>
+            `).join("")}
+        </div>
+    `;
+
+    // Save answer automatically when clicking
+    document.querySelectorAll(`input[name="q${currentIndex}"]`).forEach(radio => {
+        radio.addEventListener("change", function() {
+            userAnswers[currentIndex] = parseInt(this.value);
+        });
+    });
+}
+
+/* ─────────── NEXT / PREVIOUS — Keeps Answers Saved ─────────── */
+function nextQuestion() {
+    if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        showQuestion();
+    }
+}
+function prevQuestion() {
+    if (currentIndex > 0) {
+        currentIndex--;
+        showQuestion();
+    }
+}
+
+/* ─────────── SUBMIT: Score Only Based on Answered Questions ─────────── */
+function submitQuiz() {
+    let score = 0;
+    let answeredQuestions = Object.keys(userAnswers).length;
+    let details = "";
+
+    for (let index in userAnswers) {
+        index = parseInt(index);
+        let q = questions[index];
+        let userAnswer = userAnswers[index];
+
+        if (userAnswer === q.a) score++;
+
+        details += `
+            <p>
+                <b>${index + 1}. ${q.q}</b><br>
+                <span class="${userAnswer === q.a ? 'correct-answer' : 'incorrect-answer'}">
+                    Your answer: ${q.o[userAnswer]}
+                </span><br>
+                <span class="correct-answer">Correct answer: ${q.o[q.a]}</span>
+            </p><hr>
+        `;
+    }
+
+    if (answeredQuestions === 0) {
+        details = "<p>You did not answer any question.</p>";
+    }
+
+    document.getElementById("result").style.display = "block";
+    document.getElementById("result").innerHTML = `
+        <h2>Answered: ${answeredQuestions} / ${questions.length}</h2>
+        <h2>Your Score: ${score}</h2><br>
+        ${details}
+    `;
+}
+
+/* ─────────── TIMER (unchanged) ─────────── */
+let timeLeft = 30 * 60;
+function countdown() {
+    let minutes = Math.floor(timeLeft / 60);
+    let seconds = timeLeft % 60;
+
+    document.getElementById("time").innerHTML =
+        `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+
+    if (timeLeft <= 0) {
+        submitQuiz();
+        document.getElementById("timer").style.background = "red";
+        return;
+    }
+    timeLeft--;
+    setTimeout(countdown, 1000);
+}
+countdown();
+
+/* ─────────── SHOW FIRST QUESTION ─────────── */
+showQuestion();
+
+
+</script>
+
+</body>
+</html>
+
